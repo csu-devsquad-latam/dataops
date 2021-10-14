@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appName":{
+            "value": "dataops"
+        },
+        "squadName": {
+            "value": "datalab"
+        },
+        "resourceGroupName":{
+            "value": "rg-dataops-dev"
+        },
+        "dataFactoryName": {
+            "value": "via-adf-dataops-dev"
+        },
+        "keyVaultName": {
+            "value": "via-kv-dataops-dev"
+        },
+        "location": {
+            "value": "eastus2"
+        },
+        "kvSoftDeleteRetentionInDays":{
+            "value": 90
+        }
+    }
+}
