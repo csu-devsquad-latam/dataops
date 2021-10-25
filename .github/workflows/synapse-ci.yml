@@ -1,0 +1,64 @@
+name: Synapse/CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'synapse/**'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      ARTIFACTS_PATH: build
+      PROFILE_PATH: profiles
+      ENVIRONMENT_PREFIX: dev
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: dotnet-build
+        name: Building DACPAC
+        uses: ./.github/actions/dotnet-data-build
+        with:
+          configuration: 'Release'
+          solution: src/**/*.sqlproj
+          outputpath: $PWD/${ARTIFACTS_PATH}
+  
+      - id: sql-login
+        name: Adquiring SQL Access Token
+        uses: Azure/azure-resource-login-action@v1.0.0
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+          resource-url: "https://database.windows.net"
+      
+      - id: deploy-report
+        name: Identifying proposed changes
+        uses: Azure/run-sqlpackage-action@v1.0.0
+        with:
+          action: 'DeployReport'
+          sourcepath: $PWD/${ARTIFACTS_PATH}
+          outputpath: $PWD/${ARTIFACTS_PATH}
+          outputfile: 'deployreport.xml'
+          profile: ${{ github.workspace }}/${PROFILE_PATH}/${ENVIRONMENT_PREFIX}.profile.xml
+          authtoken: ${{ steps.sql-login.outputs.token }}
+      
+      - id: validate-deploy
+        name: Validating proposed changes
+        uses: ./.github/actions/validate-sqlpackage
+        with:
+          environment: ${{ env.ENVIRONMENT_PREFIX }}
+          sqlpackage-report: $PWD/${{ env.ARTIFACTS_PATH }}/*.xml
+          outputpath: ${{ env.ARTIFACTS_PATH }}
+          outputfile: 'deployreport.MD'
+          haltonerrors: true
+
+      - name: Publishing artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: ${{ env.ARTIFACTS_PATH }}/*
