@@ -21,6 +21,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: "Install Azure CLI"
+        uses: ./.github/actions/azcli-install
+
+      - name: Install PowerShell
+        uses: ./.github/actions/powershell-install
+
+      - name: "Logining in into Azure"
+        uses: ./.github/actions/azure-login
+        with:
+          clientId: ${{ secrets.AZ_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+          tenantId: ${{ secrets.AZ_TENANT_ID }}
+
+      - name: "Logining in into Azure via PowerShell"
+        uses: ./.github/actions/azure-login-powershell
+        with:
+          clientId: ${{ secrets.AZ_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+          tenantId: ${{ secrets.AZ_TENANT_ID }}
+
       - id: dotnet-build
         name: Building DACPAC
         uses: ./.github/actions/dotnet-data-build
