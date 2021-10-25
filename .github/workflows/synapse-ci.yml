@@ -26,8 +26,8 @@ jobs:
 
       - name: Install PowerShell
         uses: ./.github/actions/powershell-install
-
-      - name: "Logining in into Azure"
+      
+      - name: "Logging to Azure"
         uses: ./.github/actions/azure-login
         with:
           clientId: ${{ secrets.AZ_CLIENT_ID }}
