@@ -27,19 +27,12 @@ jobs:
       - name: Install PowerShell
         uses: ./.github/actions/powershell-install
       
-      - name: "Logging to Azure"
-        uses: ./.github/actions/azure-login
+      - name: Azure Login
+        uses: Azure/login@v1.4.0
         with:
-          clientId: ${{ secrets.AZ_CLIENT_ID }}
-          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
-          tenantId: ${{ secrets.AZ_TENANT_ID }}
-
-      - name: "Logining in into Azure via PowerShell"
-        uses: ./.github/actions/azure-login-powershell
-        with:
-          clientId: ${{ secrets.AZ_CLIENT_ID }}
-          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
-          tenantId: ${{ secrets.AZ_TENANT_ID }}
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
 
       - id: dotnet-build
         name: Building DACPAC
