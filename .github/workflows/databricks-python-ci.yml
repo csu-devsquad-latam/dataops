@@ -3,7 +3,7 @@ name: Databricks/Python/CI
 on:
   pull_request:
     branches:
-      - develop
+      - main
     paths:
       - 'databricks/**.py'
 
