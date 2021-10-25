@@ -1,0 +1,27 @@
+name: 'Import AppConfig Variables'
+description: 'Import variables from a properties file to AppConfig with namespace'
+
+inputs:
+  parametersFilePath:
+    description: File containing the parameters to be imported
+    required: true
+  environment:
+    description: 'Environment name'
+    required: true
+  conf:
+    description: 'Configuration file that contains appconfig and namespaces data'
+    required: false
+    default: conf.json
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: "Log parameters file"
+    run: cat ${{ inputs.parametersFilePath }}
+    shell: bash
+
+  - name: Import parameters to App Configuration
+    id: import
+    run: ${{ github.action_path }}/import.sh ${{ inputs.parametersFilePath }} ${{ inputs.environment }} ${{ inputs.conf }}
+    shell: bash

@@ -1,0 +1,62 @@
+name: 'Building a data solution'
+description: 'Compiles and build a dotnet core solution with data components'
+inputs:
+  configuration:
+    description: 'Build configuration to use'
+    required: true
+    default: 'Release'
+  solution:
+    description: 'The path where to look for the solution'
+    required: true
+  outputpath:
+    description: 'The output folder where assets will be generated if any'
+    required: true
+outputs:
+  package:
+    description: "File name of the generated package"
+    value: ${{ steps.dotnet-build.outputs.packagename }}
+runs:
+  using: "composite"
+  steps:
+    - name: Installing SQL Data Tools
+      shell: bash
+      run: |
+        if test -f "azuredatastudio"; then
+          echo "::debug::Azure Data Studio already installed in the context"
+        else
+
+          wget https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          rm packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo apt-get install -y dotnet-sdk-3.1
+
+          sudo apt-get install -y \
+              libnss3 \
+              gnupg \
+              libxkbfile1 \
+              libsecret-1-0 \
+              libgtk-3-0 \
+              libxss1 \
+              libgbm1 \
+              libunwind8
+
+          wget -progress=bar:force -q -O azuredatastudio-linux.deb https://go.microsoft.com/fwlink/?linkid=2168339 \
+            && sudo dpkg -i azuredatastudio-linux.deb \
+            && rm azuredatastudio-linux.deb
+        fi
+
+    - id: dotnet-build
+      name: Building solution
+      shell: bash
+      run: |
+        NET_CORE_TARGETS_PATH=/usr/share/azuredatastudio/resources/app/extensions/mssql/sqltoolsservice/Linux/$(ls /usr/share/azuredatastudio/resources/app/extensions/mssql/sqltoolsservice/Linux/ | head -n1)
+        dotnet build ${{ inputs.solution }} \
+          /p:NetCoreBuild=true \
+          /p:NETCoreTargetsPath="${NET_CORE_TARGETS_PATH}" \
+          /p:Configuration=${{ inputs.configuration }} \
+          /p:OutputPath=${{ inputs.outputpath }}
+        
+        PACKAGE_NAME=$(find ${ARTIFACTS_PATH} -name '*.dacpac' -exec basename {} \;)
+        echo "::debug::Package built with name: $PACKAGE_NAME"
+        echo "::set-output name=packagename::$PACKAGE_NAME"

@@ -1,0 +1,25 @@
+name: Azure Login
+description:  This action login into Azure
+
+inputs:
+  clientId:
+    description: ClientID of the Service Principal
+    required: true
+  clientSecret:
+    description: ClientSecret of the Service Principal
+    required: true
+  tenantId:
+    description: TenantID of the Service Principal
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Login using AZ CLI
+      id: login-az-cli
+      run: |
+        az login --service-principal \
+          --username ${{ inputs.clientId }} \
+          -p=${{ inputs.clientSecret }} \
+          --tenant ${{ inputs.tenantId }}
+      shell: bash

@@ -1,0 +1,33 @@
+name: Azure Deploy
+description:  This action builds, deploys and extracts the deployment output variables to a file
+
+inputs:
+  subscription:
+    description: subscription id
+    required: true
+  resourceGroup:
+    description: Resource group name to witch deploy the template
+    required: true
+  templateFile:
+    description: ARM template file to be deployed
+    required: true
+  parametersFile:
+    description: File containing the parameters to be applied to the template
+    required: false
+  deploymentOutputFilePath: 
+    description: Path to the deployment output file
+    required: false
+    default: deploymentOutput.json
+  additionalParameters:
+    description: Aditional parameters to be applied to the template. Multiple parameters should be separated by a space character.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Deploy ARM template
+      id: deploy-arm-template-adicional-params
+      run: echo $(az deployment group create --resource-group ${{ inputs.resourceGroup }} --subscription ${{ inputs.subscription }} --template-file ${{inputs.templateFile}} --parameters @${{ inputs.parametersFile }} ${{ inputs.additionalParameters }}) > ${{ inputs.deploymentOutputFilePath }}
+      shell: bash
+
+    # TODO check operation status

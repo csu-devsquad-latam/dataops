@@ -1,0 +1,27 @@
+name: Azure What If
+description:  This runs the WHAT-IF command with a given template file
+
+inputs:
+  subscription:
+    description: Subscription ID
+    required: true
+  resourceGroup:
+    description: resource group name
+    required: true
+  templateFile:
+    description: ARM template file to be deployed
+    required: true
+  parametersFile:
+    description: File containing the parameters to be applied to the template
+    required: true
+  additionalParameters:
+    description: Aditional parameters to be applied to the template. Multiple parameters should be separated by a space character.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: What-if with additional params
+      id: deploy-arm-template-adicional-params
+      run: az deployment group what-if --resource-group ${{ inputs.resourceGroup }} --subscription ${{ inputs.subscription }}  --template-file  ${{ inputs.templateFile }} --parameters @${{ inputs.parametersFile }} ${{ inputs.additionalParameters }}
+      shell: bash

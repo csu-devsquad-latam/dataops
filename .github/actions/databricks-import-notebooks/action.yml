@@ -1,0 +1,28 @@
+name: 'Import notebooks'
+description: 'Import notebooks'
+
+inputs:
+  DATABRICKS_HOST:
+    description: 'Databricks host'
+    required: true
+  LOCAL_NOTEBOOKS_PATH:
+    description: 'LOCAL_NOTEBOOKS_PATH'
+    required: true
+    default: './databricks'
+  REMOTE_NOTEBOOK_PATH:
+    description: 'REMOTE_NOTEBOOK_PATH'
+    required: true
+    default: 'datalab'
+
+runs:
+  using: "composite"
+  steps:
+    - id: import-notebooks
+      run: | 
+        echo "Uploading notebooks from $LOCAL_NOTEBOOKS_PATH to $REMOTE_NOTEBOOK_PATH in the workspace $DATABRICKS_HOST"
+        databricks workspace import_dir --overwrite "${LOCAL_NOTEBOOKS_PATH}" "${REMOTE_NOTEBOOK_PATH}" --debug
+      shell: bash
+      env:
+        DATABRICKS_HOST: ${{ inputs.DATABRICKS_HOST }}
+        LOCAL_NOTEBOOKS_PATH: ${{ inputs.LOCAL_NOTEBOOKS_PATH }}
+        REMOTE_NOTEBOOK_PATH: ${{ inputs.REMOTE_NOTEBOOK_PATH }}

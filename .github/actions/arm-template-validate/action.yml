@@ -1,0 +1,24 @@
+name: Validate Template
+description: This action validates an ARM template
+
+inputs:
+  templateDirPath: 
+    description: Directory where the ARM template azuredeploy.json is located
+    required: false
+    default: ./
+
+runs:
+  using: composite
+  steps:
+     
+    - name: Download
+      run: | 
+        curl -L -o arm-ttk.zip https://github.com/Azure/arm-ttk/releases/download/20210823/arm-ttk.2021.08.23.zip
+        unzip arm-ttk.zip
+      shell: bash
+
+    - name: validate
+      run: |
+        Import-Module ./arm-ttk/arm-ttk.psd1
+        Test-AzTemplate -TemplatePath ${{ inputs.templateDirPath }}
+      shell: pwsh

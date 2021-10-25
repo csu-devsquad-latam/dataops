@@ -1,0 +1,19 @@
+name: Extract Azure Deployment Output params
+description: Extracts
+
+inputs:
+  deploymentOutputFilePath:
+    description: File containing the Azure deployment result
+    required: true
+  outputParamsFilePath:
+    description: File to be created containing the extracted parameters
+    required: true
+    default: outputParams.properties
+
+runs:
+  using: composite
+  steps:
+    - name: Extract output parameters to file
+      id: extract-output-parameters
+      run: jq -r '.properties.outputs | to_entries | map("\(.key)=\(.value.value)") | .[]' ${{ inputs.deploymentOutputFilePath }} > ${{ inputs.outputParamsFilePath }}
+      shell: bash

@@ -1,0 +1,18 @@
+name: 'Export AppConfig Variables'
+description: 'Export AppConfig namespace variables to environment variables'
+
+inputs:
+  environment:
+    description: 'Environment name'
+    required: true
+  conf:
+    description: 'Configuration file that contains appconfig and namespaces data'
+    required: false
+    default: conf.json
+
+runs:
+  using: "composite"
+  steps:
+  - id: export
+    run: ${{ github.action_path }}/export.sh ${{ inputs.environment}} ${{ inputs.conf }}
+    shell: bash

@@ -1,0 +1,44 @@
+name: 'Deploy ARM template'
+description: 'Run pre-deploy step which stop all triggers, deploy the ARM template and then run post-deploy step to reactivate all triggers'
+
+inputs:
+  resource-group-name:
+    description: 'Resource group name which contains data factory'
+    required: true
+  data-factory-name:
+    description: 'Data factory name'
+    required: true
+  arm-template-file:
+    description: 'ARM template file name'
+    required: false
+    default: 'ARMTemplateForFactory.json'
+  arm-template-parameters-file:
+    description: 'ARM template parameters file name'
+    required: false
+    default: 'ARMTemplateParametersForFactory.json'
+  additional-parameters:
+    description: 'Parameters which will be replaced in the ARM template'
+    required: false
+    default: ''
+  prePostdeploymentScript:
+    description: script to be run before and after the deployment
+    required: false
+    default: ./PrePostDeploymentScript.ps1
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Pre-deploy script
+      run: ${{inputs.prePostdeploymentScript}} -armTemplate '${{ inputs.arm-template-file }}' -ResourceGroupName '${{ inputs.resource-group-name }}' -DataFactoryName '${{ inputs.data-factory-name }}' -predeployment $true -deleteDeployment $false
+      shell: pwsh
+
+    - name: Run ARM deploy
+      uses: azure/arm-deploy@v1
+      with:
+        resourceGroupName: ${{ inputs.resource-group-name }}
+        template: ${{ inputs.arm-template-file }}
+        parameters: ${{ inputs.arm-template-parameters-file }} factoryName=${{ inputs.data-factory-name }} ${{ inputs.additional-parameters }}
+        
+    - name: Run Post-deploy script
+      run: ${{inputs.prePostdeploymentScript}} -armTemplate '${{ inputs.arm-template-file }}' -ResourceGroupName '${{ inputs.resource-group-name }}' -DataFactoryName '${{ inputs.data-factory-name }}' -predeployment $false -deleteDeployment $true
+      shell: pwsh

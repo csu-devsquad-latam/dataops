@@ -1,0 +1,25 @@
+name: Azure Login using PowerShell
+description:  This action login into Azure using PowerShell
+
+inputs:
+  clientId:
+    description: ClientID of the Service Principal
+    required: true
+  clientSecret:
+    description: ClientSecret of the Service Principal
+    required: true
+  tenantId:
+    description: TenantID of the Service Principal
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Login using PowerShell
+      id: login-az-powershell
+      run: |
+        Install-Module -Name Az.Accounts -AllowClobber -Force
+        $password = ConvertTo-SecureString '${{ inputs.clientSecret }}' -AsPlainText -Force
+        $pscredential = New-Object -TypeName System.Management.Automation.PSCredential('${{ inputs.clientId }}', $password)
+        Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant ${{ inputs.tenantId }}
+      shell: pwsh

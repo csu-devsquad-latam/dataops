@@ -1,0 +1,9 @@
+name: 'Install Azure Powershell'
+description: 'Install Azure Powershell'
+
+runs:
+  using: "composite"
+  steps:
+  - id: install-az-powershell
+    run: Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+    shell: pwsh

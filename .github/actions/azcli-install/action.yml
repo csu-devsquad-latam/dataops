@@ -1,0 +1,9 @@
+name: 'Azure CLI Install for Ubuntu'
+description: 'Install latest Azure CLI on Ubuntu'
+
+runs:
+  using: "composite"
+  steps:
+  - id: install-azure-cli
+    run: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    shell: bash

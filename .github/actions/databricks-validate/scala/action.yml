@@ -1,0 +1,22 @@
+name: 'Validate Scala style of databricks notebooks'
+description: 'Validate Scala Code'
+
+inputs:
+  workingDirectory:
+    description: 'Working directory of project'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - id: validate-scalastyle
+      run: | 
+        scala_output=$(java -jar scalastyle.jar --config ${{ inputs.workingDirectory }}/config/scalastyle_config.xml ${{ inputs.workingDirectory }})
+        echo $scala_output
+        if [[ $scala_output != *"0 warning"* ]]; then
+          echo "Error!" > "Check scala style"
+          exit 64
+        else
+          echo "No scala styling errors or warnings found" 
+        fi
+      shell: bash

@@ -1,0 +1,41 @@
+name: Nexus Upload
+description: This action uploads an artifact to Nexus
+
+inputs:
+  username:
+    description: Nexus username
+    required: true
+  password:
+    description: Nexus password
+    required: true
+  serverUrl:
+    description: Nexus URL
+    required: false
+    default: http://nexus.viavarejo.com.br
+  repositoryName:
+    description: Name of the nexus repository
+    required: true
+  projectName:
+    description: Name of the project
+    required: true
+  artifactName:
+    description: Name of the nexus artifact
+    required: true
+  uploadDirPath:
+    description: Path of the directory to be uploaded to Nexus
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Zip artifact # TO DO - Especificar lista de arquivos e/ou diretórios
+      run: |
+        cd ${{ inputs.uploadDirPath}} 
+        zip -r '${{ inputs.artifactName }}.zip' ./
+      shell: bash
+
+    - run: |
+        curl -u ${{ inputs.username }}:${{ inputs.password }} \
+          ${{inputs.serverUrl}}/repository/${{inputs.repositoryName}}/${{inputs.projectName}}/${{inputs.artifactName}}.zip \
+          --upload-file ${{ inputs.uploadDirPath}}/${{inputs.artifactName}}.zip -v
+      shell: bash

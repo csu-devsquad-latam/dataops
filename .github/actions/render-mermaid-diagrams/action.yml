@@ -1,0 +1,14 @@
+name: 'render-md-mermaid'
+description: 'Renders mermaid diagrams in Markdown files from a specified directory'
+
+inputs:
+  path:
+    description: Directory where Markdown files will be scanned
+    required: false
+    default: "./"
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path }}

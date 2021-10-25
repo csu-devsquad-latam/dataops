@@ -1,0 +1,14 @@
+name: 'Extract release version'
+description: 'Extract semantic version from the target release branch'
+
+outputs:
+  version:
+    description: Release version
+    value: ${{ steps.release.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: release
+      run: echo "::set-output name=version::$(echo ${GITHUB_REF#refs/heads/release/})"  
+      shell: bash

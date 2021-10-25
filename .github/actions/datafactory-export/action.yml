@@ -1,0 +1,22 @@
+name: 'Export Azure Data Factory'
+description: 'Exports all objects in an existing Azure Data Factory to an ARM Template'
+
+inputs:
+  data-factory-directory:
+    description: 'Data Factory directory'
+    required: true
+  data-factory-id:
+    description: 'Data Factory resource ID'
+    default: '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.DataFactory/factories/dataFactory'
+    required: false
+
+outputs:
+  arm-template-directory:
+    description: 'Directory where the ARM template will be saved'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.data-factory-directory }}
+    - ${{ inputs.data-factory-id }}

@@ -1,0 +1,12 @@
+name: 'Download scalastyle for Ubuntu'
+description: 'Install scalastyle on Ubuntu for Scala Validate'
+
+runs:
+  using: "composite"
+  steps:
+    - id: download-scalastyle
+      run: | 
+        sudo apt-get update
+        sudo apt-get install -y wget
+        sudo wget -O scalastyle.jar https://oss.sonatype.org/content/repositories/releases/org/scalastyle/scalastyle_2.12/1.0.0/scalastyle_2.12-1.0.0-batch.jar
+      shell: bash

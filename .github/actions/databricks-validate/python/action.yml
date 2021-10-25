@@ -1,0 +1,10 @@
+name: 'Validate Python style of databricks notebooks'
+description: 'Validate Python Code'
+
+runs:
+  using: "composite"
+  steps:
+    - id: validate-flake8 # run the run.py to get the latest data
+      run: | 
+        flake8 --ignore=E501,F821,E402,F405,E999
+      shell: bash

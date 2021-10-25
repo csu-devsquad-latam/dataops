@@ -1,0 +1,17 @@
+name: Build Bicep Template
+description: This action builds a Bicep template to an ARM template in the specified path.
+
+inputs:
+  bicepTemplatePath:
+    description: Bicep template to be built
+    required: true
+  outputTemplatePath:
+    description: Path to the built ARM template file
+    required: false
+    default: ./
+
+runs:
+  using: composite
+  steps:
+    - run: az bicep build --file ${{ inputs.bicepTemplatePath }} --outfile ${{ inputs.outputTemplatePath }}
+      shell: bash

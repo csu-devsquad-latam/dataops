@@ -1,0 +1,18 @@
+name: 'Validate Azure Data Factory'
+description: 'Validates all objects in an existing Azure Data Factory'
+
+inputs:
+  data-factory-directory:
+    description: 'Data Factory directory'
+    required: true
+  data-factory-id:
+    description: 'Data Factory resource ID'
+    default: '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.DataFactory/factories/dataFactory'
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.data-factory-directory }}
+    - ${{ inputs.data-factory-id }}
