@@ -1,0 +1,67 @@
+name: Infrastructure/CI
+
+on: 
+  workflow_dispatch:
+
+  pull_request:
+    branches:
+      - main
+    paths: 
+      - 'infrastructure/**'
+
+jobs:
+  build:
+    name: Validate template
+    runs-on: ubuntu-latest
+    environment: dev
+  
+    env:
+      ARTIFACT_NAME: 'iac-dev-build-output.${{ github.run_id }}'
+      ENV: dev
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Azure CLI
+        uses: ./.github/actions/azcli-install
+
+      - name: Install PowerShell
+        uses: ./.github/actions/powershell-install
+
+      - name: Build Bicep Template
+        uses: ./.github/actions/bicep-build
+        with:
+          bicepTemplatePath: ./infrastructure/main.bicep
+          outputTemplatePath: ./infrastructure/azuredeploy.json
+
+      - name: Validate Template
+        uses: ./.github/actions/arm-template-validate
+        with:
+          templateDirPath: ./infrastructure
+
+      - name: "Logging to Azure"
+        uses: ./.github/actions/azure-login
+        with:
+          clientId: ${{ secrets.AZ_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+          tenantId: ${{ secrets.AZ_TENANT_ID }}
+
+      - name: Prepare Variables
+        run: |
+          echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*\/}" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP_NAME=$(jq -r '.environments.${{env.ENV}}.resourceGroup' conf.json)" >> $GITHUB_ENV
+
+      - name: "Preview infra changes"
+        uses: ./.github/actions/azure-whatif
+        with:
+          subscription: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+          resourceGroup: ${{ env.RESOURCE_GROUP_NAME }}
+          templateFile: ./infrastructure/azuredeploy.json
+          parametersFile: ./infrastructure/parameters/parameters.${{env.ENV}}.json
+          additionalParameters: environment=${{env.ENV}} githubRepoName=${{env.REPOSITORY_NAME}}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ./infrastructure
