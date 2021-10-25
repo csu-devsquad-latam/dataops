@@ -14,23 +14,23 @@
         }
     ],
     "server": {
-        "dev": "via-appconf-dataops-dev",
-        "hlg": "via-appconf-dataops-hlg",
-        "prd": "via-appconf-dataops-prd"
+        "dev": "devsquad-appconf-dataops-dev",
+        "hlg": "devsquad-appconf-dataops-hlg",
+        "prd": "devsquad-appconf-dataops-prd"
     },
 
     "environments": {
         "dev": {
             "resourceGroup": "rg-dataops-dev",
-            "appConfigServer":"via-appconf-dataops-dev"
+            "appConfigServer":"devsquad-appconf-dataops-dev"
         },
         "hlg": {
             "resourceGroup": "rg-dataops-hlg",
-            "appConfigServer":"via-appconf-dataops-hlg"
+            "appConfigServer":"devsquad-appconf-dataops-hlg"
         },
         "prd": {
             "resourceGroup": "rg-dataops-prd",
-            "appConfigServer":"via-appconf-dataops-prd"
+            "appConfigServer":"devsquad-appconf-dataops-prd"
         }
     },
 
