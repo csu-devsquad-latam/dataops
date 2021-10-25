@@ -1,0 +1,41 @@
+{
+    "version": "v1.0",
+    "readWrite": {
+        "namespace": "tribes.engenharia.apps.datalab.config"
+    },
+    "read": [
+        {
+            "namespace": "tribes.engenharia.config",
+            "exportPrefix": "tribe"
+        },
+        {
+            "namespace": "shared.config",
+            "exportPrefix": "shared"
+        }
+    ],
+    "server": {
+        "dev": "via-appconf-dataops-dev",
+        "hlg": "via-appconf-dataops-hlg",
+        "prd": "via-appconf-dataops-prd"
+    },
+
+    "environments": {
+        "dev": {
+            "resourceGroup": "rg-dataops-dev",
+            "appConfigServer":"via-appconf-dataops-dev"
+        },
+        "hlg": {
+            "resourceGroup": "rg-dataops-hlg",
+            "appConfigServer":"via-appconf-dataops-hlg"
+        },
+        "prd": {
+            "resourceGroup": "rg-dataops-prd",
+            "appConfigServer":"via-appconf-dataops-prd"
+        }
+    },
+
+    "nexus":{
+        "repository":"datalab",
+        "project":"pocdataops"
+    }
+}
