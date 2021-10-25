@@ -15,7 +15,7 @@ jobs:
 
     env:
       ARTIFACTS_PATH: build
-      PROFILE_PATH: profiles
+      PROFILE_PATH: synapse/profiles
       ENVIRONMENT_PREFIX: dev
 
     steps:
@@ -26,7 +26,7 @@ jobs:
         uses: ./.github/actions/dotnet-data-build
         with:
           configuration: 'Release'
-          solution: src/**/*.sqlproj
+          solution: synapse/src/**/*.sqlproj
           outputpath: $PWD/${ARTIFACTS_PATH}
   
       - id: sql-login
