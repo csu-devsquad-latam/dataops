@@ -12,8 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     env:
+      ENV: dev
       ARTIFACTS_PATH: build
       PROFILE_PATH: synapse/profiles
       ENVIRONMENT_PREFIX: dev
@@ -30,7 +30,6 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v1.4.0
         with:
-          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           enable-AzPSSession: true
 
