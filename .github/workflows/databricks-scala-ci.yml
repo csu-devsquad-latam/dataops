@@ -27,7 +27,7 @@ jobs:
 
     # Action created by the devsquad
       - name: scalastyle-download
-        uses: microsoft/scalastyle-download@v1.0.0
+        uses: microsoft/scala-style-download@v1.0.0
 
     # Action created by the devsquad
       - name: scalastyle-validate
