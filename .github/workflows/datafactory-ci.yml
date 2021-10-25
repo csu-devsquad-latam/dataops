@@ -1,0 +1,21 @@
+name: DataFactory/CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - develop
+    paths:
+    - 'datafactory/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Validate Data Factory resources
+      uses: Azure/data-factory-validate-action@v1.1.4
+      with:
+        path: ./datafactory

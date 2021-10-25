@@ -1,0 +1,30 @@
+name: Databricks/Python/CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'databricks/**.py'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    defaults:
+      run:
+        working-directory: ./databricks
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+
+      - name: Install flake8
+        uses: ./.github/actions/flake8-install
+     
+      - name: Validate Python style of databricks notebooks
+        uses: ./.github/actions/databricks-validate/python

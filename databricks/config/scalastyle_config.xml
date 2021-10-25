@@ -1,0 +1,16 @@
+<scalastyle commentFilter="enabled">
+    <name>Scalastyle standard configuration</name>
+    <check enabled="true" class="org.scalastyle.file.FileLengthChecker" level="warning">
+        <parameters>
+            <parameter name="maxFileLength">1200</parameter>
+        </parameters>
+    </check>
+    <check enabled="true" class="org.scalastyle.file.IndentationChecker" level="warning">
+        <parameters>
+            <parameter name="tabSize">2</parameter>
+            <parameter name="methodParamIndentSize">2</parameter>
+            <parameter name="classParamIndentSize">4</parameter>
+        </parameters>
+    </check>
+    <check enabled="true" class="org.scalastyle.file.NewLineAtEofChecker" level="warning"/>
+</scalastyle>
