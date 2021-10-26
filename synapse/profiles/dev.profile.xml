@@ -15,7 +15,7 @@
     <DoNotDropApplicationRoles>True</DoNotDropApplicationRoles>
     <DoNotDropDatabaseRoles>True</DoNotDropDatabaseRoles>
     <DoNotDropPermissions>True</DoNotDropPermissions>
-    <TargetConnectionString>Data Source=analyticsworkplace.sql.azuresynapse.net;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
+    <TargetConnectionString>Data Source=dataops-devsquad.sql.azuresynapse.net;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
     <TargetDatabaseName>Dedicated</TargetDatabaseName>
     <ProfileVersionNumber>1</ProfileVersionNumber>
   </PropertyGroup>
