@@ -12,10 +12,10 @@
             "value": "rg-dataops-dev"
         },
         "dataFactoryName": {
-            "value": "via-adf-dataops-dev"
+            "value": "devsquad-adf-dataops-dev"
         },
         "keyVaultName": {
-            "value": "via-kv-dataops-dev"
+            "value": "devsquad-kv-dataops-dev"
         },
         "location": {
             "value": "eastus2"
