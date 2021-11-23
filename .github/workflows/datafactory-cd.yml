@@ -59,11 +59,6 @@ jobs:
         clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
         tenantId: ${{ secrets.AZ_TENANT_ID }}
 
-    - name: Exports Configs
-      uses: ./.github/actions/appconfig-export
-      with: 
-        environment: dev
-
     - name: Download ARM template
       uses: actions/download-artifact@v2
       with:
