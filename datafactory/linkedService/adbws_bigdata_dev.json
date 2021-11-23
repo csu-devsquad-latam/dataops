@@ -1,0 +1,19 @@
+{
+	"name": "adbws_bigdata_dev",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-5634774381433770.10.azuredatabricks.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/cd7830ba-234d-4033-9d38-22306144b136/resourceGroups/rg-bigdata-dev/providers/Microsoft.Databricks/workspaces/adbws-bigdata-dev",
+			"instancePoolId": "0729-172729-nappy991-pool-UXTrBktq",
+			"newClusterNumOfWorker": "1",
+			"newClusterSparkEnvVars": {
+				"PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+			},
+			"newClusterVersion": "7.3.x-scala2.12",
+			"newClusterInitScripts": []
+		}
+	}
+}

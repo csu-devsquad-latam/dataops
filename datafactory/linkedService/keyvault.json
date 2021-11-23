@@ -1,0 +1,10 @@
+{
+	"name": "keyvault",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://via-kv-dataops-dev.vault.azure.net/"
+		}
+	}
+}
