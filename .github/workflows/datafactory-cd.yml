@@ -24,7 +24,7 @@ jobs:
     - name: Publish ARM template
       uses: actions/upload-artifact@v2
       with:
-        name: my-artifact
+        name: adf-arm-template-dev
         path: ${{ steps.export.outputs.arm-template-directory }}
         if-no-files-found: error
 
