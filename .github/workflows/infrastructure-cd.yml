@@ -42,17 +42,18 @@ jobs:
       - name: Bicep Build
         uses: Azure/bicep-build-action@v1.0.0
         with:
-          bicepTemplatePath:  ./infrastructure/main.bicep
-          outputTemplatePath: ./infrastructure/azuredeploy.json
+          bicepFilePath:  ./infrastructure/main.bicep
+          outputFilePath: ./infrastructure/azuredeploy.json
 
-      - name: Preview changes
-        uses: Azure/deployment-what-if-action@v1.0.0
+      - name: Deploy template
+        uses: ./.github/actions/azure-deploy
         with:
           subscription: ${{secrets.AZ_SUBSCRIPTION_ID}}
           resourceGroup: ${{env.RESOURCE_GROUP_NAME}}
           templateFile: ./infrastructure/azuredeploy.json
           parametersFile: ./infrastructure/parameters/parameters.${{ env.ENV }}.json
           additionalParameters: environment=${{ env.ENV }} githubRepoName=${{ env.REPOSITORY_NAME }}
+          deploymentOutputFilePath: ${{ env.DEPLOYMENT_RESULT_PATH }}
               
       - name: Upload artifact
         uses: actions/upload-artifact@v2
