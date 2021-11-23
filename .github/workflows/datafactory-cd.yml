@@ -10,26 +10,26 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v2
-
-    - name: Exports Azure Data Factory ARM Template
+    
+    - name: Export ARM Template
       id: export
-      uses: ./.github/actions/datafactory-export
+      uses: Azure/data-factory-export-action@v1.0.2
       with:
-        data-factory-directory: ./datafactory
+        path: ./datafactory
 
     - name: Publish ARM template
       uses: actions/upload-artifact@v2
       with:
-        name: adf-arm-template-dev
+        name: my-artifact
         path: ${{ steps.export.outputs.arm-template-directory }}
         if-no-files-found: error
 
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: dev
     needs: build
 
@@ -68,10 +68,11 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: adf-arm-template-dev
-
-    - name: Deploy ARM template
-      uses: ./.github/actions/datafactory-deploy
-      with: 
-        resource-group-name: ${{ env.dataFactoryResourceGroup }}
-        data-factory-name: ${{ env.dataFactoryName }}
-        additional-parameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }} datalake_url=${{ env.sharedDataLakeUrl }}'
+        
+    - name: Deploy resources
+      uses: Azure/data-factory-deploy-action@v1.0.1
+      with:
+        resourceGroupName: ${{ env.dataFactoryResourceGroup }}
+        dataFactoryName:  ${{ env.dataFactoryName }}
+        armTemplateFile: myArmTemplate.json
+        additionalParameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }} datalake_url=${{ env.sharedDataLakeUrl }}'
