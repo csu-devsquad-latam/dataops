@@ -1,0 +1,77 @@
+name: DataFactory/CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - develop
+    paths:
+    - 'datafactory/**'
+
+jobs:
+  build:
+    runs-on: self-hosted
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Exports Azure Data Factory ARM Template
+      id: export
+      uses: ./.github/actions/datafactory-export
+      with:
+        data-factory-directory: ./datafactory
+
+    - name: Publish ARM template
+      uses: actions/upload-artifact@v2
+      with:
+        name: adf-arm-template-dev
+        path: ${{ steps.export.outputs.arm-template-directory }}
+        if-no-files-found: error
+
+  deploy:
+    runs-on: self-hosted
+    environment: dev
+    needs: build
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Azure CLI
+      uses: ./.github/actions/azcli-install
+      
+    - name: Install PowerShell
+      uses: ./.github/actions/powershell-install
+
+    - name: "Install Azure Powershell"
+      uses: ./.github/actions/azure-powershell-install
+
+    - name: "Azure login"
+      uses: ./.github/actions/azure-login
+      with:
+        clientId: ${{ secrets.AZ_CLIENT_ID }}
+        clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+        tenantId: ${{ secrets.AZ_TENANT_ID }}
+    
+    - name: "PowerShell login"
+      uses: ./.github/actions/azure-login-powershell
+      with:
+        clientId: ${{ secrets.AZ_CLIENT_ID }}
+        clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+        tenantId: ${{ secrets.AZ_TENANT_ID }}
+
+    - name: Exports Configs
+      uses: ./.github/actions/appconfig-export
+      with: 
+        environment: dev
+
+    - name: Download ARM template
+      uses: actions/download-artifact@v2
+      with:
+        name: adf-arm-template-dev
+
+    - name: Deploy ARM template
+      uses: ./.github/actions/datafactory-deploy
+      with: 
+        resource-group-name: ${{ env.dataFactoryResourceGroup }}
+        data-factory-name: ${{ env.dataFactoryName }}
+        additional-parameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }} datalake_url=${{ env.sharedDataLakeUrl }}'
