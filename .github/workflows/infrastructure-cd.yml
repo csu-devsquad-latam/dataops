@@ -1,0 +1,74 @@
+name: Infrastructure/CD
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - develop
+    paths: 
+      - 'infrastructure/**'
+      - '.github/workflows/infrastructure-cd.yml'
+
+jobs:
+  build:
+    name: Deploy template
+    runs-on: self-hosted
+    environment: dev
+
+    env:
+      DEPLOYMENT_RESULT_PATH: ./infrastructure/deploymentOutput.json 
+      EXTRACTED_PARAMS_PATH: ./infrastructure/extractedOutputParams.properties 
+      ENV: dev
+  
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Azure CLI
+        uses: ./.github/actions/azcli-install
+
+      - name: "Logging to Azure"
+        uses: ./.github/actions/azure-login
+        with:
+          clientId: ${{ secrets.AZ_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+          tenantId: ${{ secrets.AZ_TENANT_ID }}
+
+      - name: Prepare Variables
+        run: |
+          echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*\/}" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP_NAME=$(jq -r '.environments.${{env.ENV}}.resourceGroup' conf.json)" >> $GITHUB_ENV
+
+      - name: Build Bicep Template
+        uses: ./.github/actions/bicep-build
+        with:
+          bicepTemplatePath:  ./infrastructure/main.bicep
+          outputTemplatePath: ./infrastructure/azuredeploy.json
+
+      - name: Deploy template
+        uses: ./.github/actions/azure-deploy
+        with:
+          subscription: ${{secrets.AZ_SUBSCRIPTION_ID}}
+          resourceGroup: ${{env.RESOURCE_GROUP_NAME}}
+          templateFile: ./infrastructure/azuredeploy.json
+          parametersFile: ./infrastructure/parameters/parameters.${{ env.ENV }}.json
+          additionalParameters: environment=${{ env.ENV }} githubRepoName=${{ env.REPOSITORY_NAME }}
+          deploymentOutputFilePath: ${{ env.DEPLOYMENT_RESULT_PATH }}
+
+      - name: Extract output params
+        uses: ./.github/actions/extract-output-params
+        with:
+          deploymentOutputFilePath: ${{ env.DEPLOYMENT_RESULT_PATH }}
+          outputParamsFilePath: ${{ env.EXTRACTED_PARAMS_PATH }}
+
+      - name: "Import params file"
+        uses: ./.github/actions/appconfig-import
+        with:
+          parametersFilePath: ${{ env.EXTRACTED_PARAMS_PATH }}
+          environment: ${{ env.ENV }}
+              
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: azuredeploy
+          path: ./infrastructure
