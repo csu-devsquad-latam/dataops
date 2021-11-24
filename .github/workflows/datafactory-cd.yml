@@ -32,6 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     needs: build
+    
+    env:
+      dataFactoryResourceGroup: 'rg-dataops-dev'
+      dataFactoryName: 'devsquad-adf-dataops-dev'
+      tribeKeyVaultUrl: 'https://devsquad-kv-dataops-dev.vault.azure.net/'
+      
 
     steps:
     - uses: actions/checkout@v2
@@ -69,4 +75,4 @@ jobs:
       with: 
         resource-group-name: ${{ env.dataFactoryResourceGroup }}
         data-factory-name: ${{ env.dataFactoryName }}
-        additional-parameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }} datalake_url=${{ env.sharedDataLakeUrl }}'
+        additional-parameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }}'
