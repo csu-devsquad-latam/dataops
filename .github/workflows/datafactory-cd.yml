@@ -64,10 +64,9 @@ jobs:
       with:
         name: adf-arm-template-dev
         
-    - name: Deploy resources
-      uses: Azure/data-factory-deploy-action@v1.0.1
-      with:
-        resourceGroupName: ${{ env.dataFactoryResourceGroup }}
-        dataFactoryName:  ${{ env.dataFactoryName }}
-        armTemplateFile: myArmTemplate.json
-        additionalParameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }} datalake_url=${{ env.sharedDataLakeUrl }}'
+    - name: Deploy ARM template
+      uses: ./.github/actions/datafactory-deploy
+      with: 
+        resource-group-name: ${{ env.dataFactoryResourceGroup }}
+        data-factory-name: ${{ env.dataFactoryName }}
+        additional-parameters: 'keyvault_url=${{ env.tribeKeyVaultUrl }} datalake_url=${{ env.sharedDataLakeUrl }}'
