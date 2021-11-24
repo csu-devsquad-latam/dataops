@@ -6,13 +6,6 @@
                     "baseUrl": "=:-url"
                 }
             }
-        },
-        "AzureBlobFS": {
-            "properties": {
-                "typeProperties": {
-                    "url": "=:-url"
-                }
-            }
         }
     }
 }
