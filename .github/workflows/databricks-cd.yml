@@ -1,0 +1,44 @@
+name: Databricks/CD
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - develop
+    paths:
+      - 'databricks/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    
+    steps:
+      - uses: actions/checkout@v2 
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+          
+      - name: Install databricks-cli
+        uses: ./.github/actions/databricks-cli-install 
+
+      - name: "Install Azure CLI"
+        uses: ./.github/actions/azcli-install 
+
+      - name: "Azure login"
+        uses: ./.github/actions/azure-login
+        with:
+          clientId: ${{ secrets.AZ_CLIENT_ID }}
+          clientSecret: ${{ secrets.AZ_CLIENT_SECRET }}
+          tenantId: ${{ secrets.AZ_TENANT_ID }}
+
+      - name: Generate Databricks Token
+        uses: ./.github/actions/databricks-generate-token
+
+      - name: Import notebooks
+        uses: ./.github/actions/databricks-import-notebooks
+        with:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          LOCAL_NOTEBOOKS_PATH: ./databricks
+          REMOTE_NOTEBOOK_PATH: '/datalab'
