@@ -20,8 +20,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.2
           
-      - name: Install databricks-cli
-        uses: ./.github/actions/databricks-cli-install 
+      - name: install-databricks-cli
+        uses: microsoft/install-databricks-cli@v1.0.0
 
       - name: "Install Azure CLI"
         uses: ./.github/actions/azcli-install 
